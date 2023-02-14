@@ -13,19 +13,23 @@ import me.hydro.emulator.object.result.IterationResult;
 import me.hydro.emulator.util.MojangCocaine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
 public class Emulator {
 
     private Motion motion = new Motion(0D, 0D, 0D, 0F, 0F);
+    private IterationInput input = null;
+    private double offset = 0;
+    private float friction;
+    private List<String> tags = Collections.emptyList();
 
-    private final DataSupplier dataSupplier;
-
-    private final JumpHandler jumpHandler = new JumpHandler();
-    private final MoveFlyingHandler moveFlyingHandler = new MoveFlyingHandler();
-    private final MoveEntityHandler moveEntityHandler = new MoveEntityHandler();
-    private final MoveEntityWithHeadingHandler moveEntityWithHeadingHandler = new MoveEntityWithHeadingHandler();
+    private final DataSupplier DATA_SUPPLIER;
+    private final JumpHandler JUMP_HANDLER = new JumpHandler();
+    private final MoveFlyingHandler MOVE_FLYING_HANDLER = new MoveFlyingHandler();
+    private final MoveEntityHandler MOVE_ENTITY_HANDLER = new MoveEntityHandler();
+    private final MoveEntityWithHeadingHandler MOVE_ENTITY_WITH_HEADING_HANDLER = new MoveEntityWithHeadingHandler();
 
     public IterationResult runIteration(final IterationInput input) {
         final Motion motion = this.motion.clone();
@@ -60,7 +64,7 @@ public class Emulator {
         motion.setStrafing(strafing);
 
         // Create the new iteration holder
-        IterationHolder iteration = new IterationHolder(this, input, dataSupplier);
+        IterationHolder iteration = new IterationHolder(this, input, DATA_SUPPLIER);
 
         iteration.setMotion(motion);
         iteration.setTags(tags);
@@ -79,10 +83,10 @@ public class Emulator {
         if (Math.abs(motion.getMotionZ()) < MojangCocaine.RESET) motion.setMotionZ(0);
 
         if (input.isJumping()) {
-            iteration = jumpHandler.handle(iteration);
+            iteration = JUMP_HANDLER.handle(iteration);
         }
 
-        iteration = moveEntityWithHeadingHandler.handle(iteration);
+        iteration = MOVE_ENTITY_WITH_HEADING_HANDLER.handle(iteration);
 
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());
@@ -90,6 +94,10 @@ public class Emulator {
 
     public void confirm(final IterationHolder iteration) {
         this.motion = iteration.getMotion();
+        this.input = iteration.getInput();
+        this.offset = iteration.getOffset();
+        this.friction = iteration.getFriction();
+        this.tags = iteration.getTags();
 
         runPostActions(iteration);
     }
