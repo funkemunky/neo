@@ -14,5 +14,5 @@ public interface MojangConstants {
 
     double SPRINT_MULTIPLIER = 0.30000001192092896D; //Don't be a dick Hydrogen, I gave the real value :)
     double GRAVITY = 0.9800000190734863D;
-    double RESET = 0.05D;
+    double RESET = 0.005D;
 }

@@ -1,6 +1,7 @@
 package me.hydro.emulator.util.mcp;
 
 import lombok.Getter;
+import me.hydro.emulator.util.Vector;
 
 @Getter
 public class AxisAlignedBB {
@@ -98,6 +99,14 @@ public class AxisAlignedBB {
         double var20 = Math.max(p_178781_2_, p_178781_8_);
         double var22 = Math.max(p_178781_4_, p_178781_10_);
         return new AxisAlignedBB(var12, var14, var16, var18, var20, var22);
+    }
+
+    public Vector resetPositionToBB() {
+        double x = (minX + maxX) / 2.0D;
+        double z = (minZ + maxZ) / 2.0D;
+        double y = minY;
+
+        return new Vector(x, y, z);
     }
 
     /**

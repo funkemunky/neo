@@ -10,13 +10,14 @@ import me.hydro.emulator.util.mcp.AxisAlignedBB;
 @Builder
 public class IterationInput implements Cloneable {
 
-    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking;
+    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking, fastMath;
     private final int forward, strafing;
     private final float yaw;
+    private final double aiMoveSpeed;
 
     private final AxisAlignedBB lastReportedBoundingBox;
     private final Vector to;
-    private final PotionEffect speed, slowness, jumpboost;
+    private final PotionEffect effectSpeed, effectSlow, effectJump;
 
     @Override
     public IterationInput clone() {
@@ -32,9 +33,9 @@ public class IterationInput implements Cloneable {
                 .yaw(yaw)
                 .lastReportedBoundingBox(lastReportedBoundingBox)
                 .to(to)
-                .speed(speed)
-                .slowness(slowness)
-                .jumpboost(jumpboost)
+                .effectSpeed(effectSpeed)
+                .effectSlow(effectSlow)
+                .effectJump(effectJump)
                 .build();
     }
 }

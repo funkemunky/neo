@@ -1,10 +1,15 @@
 package me.hydro.emulator.handler.impl;
 
+import me.hydro.emulator.collision.Block;
+import me.hydro.emulator.collision.FrictionModifier;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.MojangConstants;
 import me.hydro.emulator.util.PotionEffect;
+import me.hydro.emulator.util.Vector;
+import me.hydro.emulator.util.mcp.AxisAlignedBB;
+import me.hydro.emulator.util.mcp.MathHelper;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
 
@@ -14,8 +19,9 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         final boolean onGround = input.isGround();
 
         // Here we'll get the friction of the block below
+
         final float friction = onGround
-                ? 0.6F * 0.91F // Blocks can have different friction :)
+                ? getBlockBelowFriction(iteration) * 0.91F
                 : 0.91F;
 
         // Variable (currently unassigned) where we'll put our moveSpeed
@@ -26,17 +32,19 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // drag = 0.16277136 * friction^3
             //
             // EntityLivingBase#moveEntityWithHeading
-            final double aiMoveSpeed = getAiMoveSpeed(input.getSpeed(), input.getSlowness(), input.isSprinting());
+            final float aiMoveSpeed = getAiMoveSpeed(input.getEffectSpeed(), input.getEffectSlow(),
+                    input.getAiMoveSpeed(), input.isSprinting());
+
             final float drag = MojangConstants.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
-            moveSpeed = (float) (aiMoveSpeed * drag);
+            moveSpeed = (aiMoveSpeed * drag);
             iteration.getTags().add("ground");
         } else {
             // Found in EntityPlayer#onLivingUpdate (jumpMovementFactor of EntityLivingBase)
             // Set moveSpeed depending on sprint status
-            // This isn't completely accurate :)
             moveSpeed = input.isSprinting() ? MojangConstants.SPEED_AIR_SPRINTING : MojangConstants.SPEED_AIR;
+            iteration.getTags().add("air");
         }
 
         // Set friction to moveSpeed temporarily
@@ -66,8 +74,21 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         return iteration;
     }
 
-    private double getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, final boolean sprinting) {
-        double aiMoveSpeed = 0.1F;
+    private float getBlockBelowFriction(IterationHolder iteration) {
+        Vector position = iteration.getInput().getLastReportedBoundingBox().resetPositionToBB();
+
+        position.setY(position.getY() - 1D);
+
+        Block block = iteration.getDataSupplier().getBlockAt(position.toBlockPos());
+
+        if(block instanceof FrictionModifier) {
+            return ((FrictionModifier)block).getFriction();
+        }
+
+        return 0.6f;
+    }
+
+    private float getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, double aiMoveSpeed, final boolean sprinting) {
 
         if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangConstants.SPRINT_MULTIPLIER;
 
@@ -80,6 +101,6 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             aiMoveSpeed = (slowness.getAmplifier() + 1) * -0.15000000596046448D * aiMoveSpeed;
         }
 
-        return aiMoveSpeed;
+        return (float) aiMoveSpeed;
     }
 }

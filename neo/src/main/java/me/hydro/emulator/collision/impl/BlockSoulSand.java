@@ -9,5 +9,8 @@ public class BlockSoulSand extends Block implements CollisionBlockState {
 
     @Override
     public void transform(Emulator iteration) {
+        iteration.getMotion().multiplyX(0.4D);
+        iteration.getMotion().multiplyY(0.4D);
+        iteration.getMotion().multiplyZ(0.4D);
     }
 }

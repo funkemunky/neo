@@ -23,14 +23,17 @@ public class JumpHandler implements MovementHandler {
         motion.setMotionY(MojangConstants.UPWARDS_MOTION);
         holder.getTags().add("jump");
 
-        // Look at the client code to see how potion effects are handled :)
+        // Handling jump potion effect
+        if(input.getEffectJump() != null) {
+            motion.addY((input.getEffectJump().getAmplifier() + 1) *  0.1f);
+        }
 
         // We sprinting? Let's do some based
         if (input.isSprinting()) {
             final float f = input.getYaw() * 0.017453292F;
 
-            motion.subtractX(MathHelper.sin(f) * 0.2F);
-            motion.addZ(MathHelper.cos(f) * 0.2F);
+            motion.subtractX(MathHelper.sin(input.isFastMath(), f) * 0.2F);
+            motion.addZ(MathHelper.cos(input.isFastMath(), f) * 0.2F);
         }
 
         return holder;

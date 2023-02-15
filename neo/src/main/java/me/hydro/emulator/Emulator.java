@@ -23,6 +23,8 @@ public class Emulator {
     private IterationInput input = null;
     private double offset = 0;
     private float friction;
+    private boolean inWeb;
+
     private List<String> tags = Collections.emptyList();
 
     private final DataSupplier DATA_SUPPLIER;
@@ -57,14 +59,16 @@ public class Emulator {
         }
 
         // Mojang multiplies by 0.98F, so do we
-        forward *= 0.98F;
-        strafing *= 0.98F;
+        forward *= 0.9800000190734863F;
+        strafing *= 0.9800000190734863F;
 
         motion.setForward(forward);
         motion.setStrafing(strafing);
 
         // Create the new iteration holder
         IterationHolder iteration = new IterationHolder(this, input, DATA_SUPPLIER);
+
+        // Setting to previous motion calculated
 
         iteration.setMotion(motion);
         iteration.setTags(tags);
@@ -84,6 +88,7 @@ public class Emulator {
 
         if (input.isJumping()) {
             iteration = JUMP_HANDLER.handle(iteration);
+            tags.add("jump");
         }
 
         iteration = MOVE_ENTITY_WITH_HEADING_HANDLER.handle(iteration);

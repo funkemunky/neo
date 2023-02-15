@@ -11,6 +11,8 @@ public class MoveFlyingHandler implements MovementHandler {
         float strafe = iteration.getMotion().getStrafing();
         float forward = iteration.getMotion().getForward();
 
+        System.out.println("strafe: " + strafe + " forward: " + forward);
+
         float combined = strafe * strafe + forward * forward;
 
         if (combined >= 1.0E-4F) {
@@ -27,8 +29,8 @@ public class MoveFlyingHandler implements MovementHandler {
 
             final float yaw = iteration.getInput().getYaw();
 
-            float sin = MathHelper.sin(yaw * (float) Math.PI / 180.0F);
-            float cos = MathHelper.cos(yaw * (float) Math.PI / 180.0F);
+            float sin = MathHelper.sin(iteration.getInput().isFastMath(), yaw * (float) Math.PI / 180.0F);
+            float cos = MathHelper.cos(iteration.getInput().isFastMath(), yaw * (float) Math.PI / 180.0F);
 
             iteration.getMotion().addX(strafe * cos - forward * sin);
             iteration.getMotion().addZ(forward * cos + strafe * sin);

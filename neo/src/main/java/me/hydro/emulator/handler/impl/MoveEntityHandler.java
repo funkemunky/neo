@@ -5,6 +5,8 @@ import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionBlockState;
 import me.hydro.emulator.collision.CollisionLandable;
 import me.hydro.emulator.collision.VerticalCollisionBlock;
+import me.hydro.emulator.collision.impl.BlockSlime;
+import me.hydro.emulator.collision.impl.BlockSoulSand;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.Vector;
@@ -30,11 +32,21 @@ public class MoveEntityHandler implements MovementHandler {
         double y = iteration.getMotion().getMotionY();
         double z = iteration.getMotion().getMotionZ();
 
+        if(iteration.getEmulator().isInWeb()) {
+            x *= 0.25D;
+            y *= 0.05000000074505806D;
+            z *= 0.25D;
+            iteration.getMotion().setMotionX(0);
+            iteration.getMotion().setMotionY(0);
+            iteration.getMotion().setMotionZ(0);
+            iteration.getTags().add("web");
+        }
+
         double d3 = x;
         double d4 = y;
         double d5 = z;
 
-        final AxisAlignedBB lastReportedBoundingBox = iteration.getInput().getLastReportedBoundingBox();
+        final AxisAlignedBB lastReportedBoundingBox = iteration.getInput().getLastReportedBoundingBox().clone();
         final boolean edges = iteration.getInput().isSneaking() && iteration.getInput().isGround();
 
         if (edges) {
@@ -89,8 +101,14 @@ public class MoveEntityHandler implements MovementHandler {
 
         AxisAlignedBB entityBB = lastReportedBoundingBox;
 
+        final double ogx = x, ogy = y, ogz = z;
+
         for (AxisAlignedBB axisalignedbb1 : collidingBoxes) {
             y = axisalignedbb1.calculateYOffset(entityBB, y);
+        }
+
+        if(y != ogy) {
+            iteration.getTags().add("y-collided");
         }
 
         entityBB = entityBB.offset(0.0D, y, 0.0D);
@@ -99,10 +117,18 @@ public class MoveEntityHandler implements MovementHandler {
             x = axisalignedbb2.calculateXOffset(entityBB, x);
         }
 
+        if(x != ogx) {
+            iteration.getTags().add("x-collided");
+        }
+
         entityBB = entityBB.offset(x, 0.0D, 0.0D);
 
         for (AxisAlignedBB axisalignedbb13 : collidingBoxes) {
             z = axisalignedbb13.calculateZOffset(entityBB, z);
+        }
+
+        if(z != ogz) {
+            iteration.getTags().add("z-collided");
         }
 
         entityBB = entityBB.offset(0.0D, 0.0D, z);
@@ -203,8 +229,6 @@ public class MoveEntityHandler implements MovementHandler {
             }
         }
 
-        // We're not handling special case collisions (such as soul sand, slime, etc.). Good luck have fun :)
-
         final Vector predicted = resetPositionToBB(entityBB);
         final double offset = iteration.getInput().getTo().distance(predicted);
 
@@ -265,6 +289,9 @@ public class MoveEntityHandler implements MovementHandler {
                 emulator.getMotion().setMotionZ(0.0D);
             }
 
+            // We have to set inWeb to false very time because of how Mojang implemented this.
+            emulator.setInWeb(false);
+
             // #doBlockCollisions
             final BlockPos minPos = new BlockPos(finalBounding.minX + 0.001D, finalBounding.minY + 0.001D, finalBounding.minZ + 0.001D);
             final BlockPos maxPos = new BlockPos(finalBounding.maxX - 0.001D, finalBounding.maxY - 0.001D, finalBounding.maxZ - 0.001D);
@@ -288,6 +315,11 @@ public class MoveEntityHandler implements MovementHandler {
         return iteration;
     }
 
+    /*
+    this.posX = (this.getEntityBoundingBox().minX + this.getEntityBoundingBox().maxX) / 2.0D;
+        this.posY = this.getEntityBoundingBox().minY;
+        this.posZ = (this.getEntityBoundingBox().minZ + this.getEntityBoundingBox().maxZ) / 2.0D;
+     */
     private Vector resetPositionToBB(final AxisAlignedBB bb) {
         double x = (bb.minX + bb.maxX) / 2.0D;
         double z = (bb.minZ + bb.maxZ) / 2.0D;

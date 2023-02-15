@@ -9,5 +9,6 @@ public class BlockWeb extends Block implements CollisionBlockState {
 
     @Override
     public void transform(Emulator iteration) {
+        iteration.setInWeb(true);
     }
 }

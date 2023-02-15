@@ -190,20 +190,20 @@ public class Vec3
         return "(" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + ")";
     }
 
-    public Vec3 rotatePitch(float pitch)
+    public Vec3 rotatePitch(boolean fastMath, float pitch)
     {
-        float f = MathHelper.cos(pitch);
-        float f1 = MathHelper.sin(pitch);
+        float f = MathHelper.cos(fastMath, pitch);
+        float f1 = MathHelper.sin(fastMath, pitch);
         double d0 = this.xCoord;
         double d1 = this.yCoord * (double)f + this.zCoord * (double)f1;
         double d2 = this.zCoord * (double)f - this.yCoord * (double)f1;
         return new Vec3(d0, d1, d2);
     }
 
-    public Vec3 rotateYaw(float yaw)
+    public Vec3 rotateYaw(boolean fastMath, float yaw)
     {
-        float f = MathHelper.cos(yaw);
-        float f1 = MathHelper.sin(yaw);
+        float f = MathHelper.cos(fastMath, yaw);
+        float f1 = MathHelper.sin(fastMath, yaw);
         double d0 = this.xCoord * (double)f + this.zCoord * (double)f1;
         double d1 = this.yCoord;
         double d2 = this.zCoord * (double)f - this.xCoord * (double)f1;
