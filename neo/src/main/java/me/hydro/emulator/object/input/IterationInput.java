@@ -2,6 +2,7 @@ package me.hydro.emulator.object.input;
 
 import lombok.Builder;
 import lombok.Data;
+import me.hydro.emulator.util.PotionEffect;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
 
@@ -15,6 +16,7 @@ public class IterationInput implements Cloneable {
 
     private final AxisAlignedBB lastReportedBoundingBox;
     private final Vector to;
+    private final PotionEffect speed, slowness, jumpboost;
 
     @Override
     public IterationInput clone() {
@@ -30,6 +32,9 @@ public class IterationInput implements Cloneable {
                 .yaw(yaw)
                 .lastReportedBoundingBox(lastReportedBoundingBox)
                 .to(to)
+                .speed(speed)
+                .slowness(slowness)
+                .jumpboost(jumpboost)
                 .build();
     }
 }

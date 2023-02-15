@@ -4,6 +4,9 @@ import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.MojangCocaine;
+import me.hydro.emulator.util.PotionEffect;
+
+import java.util.List;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
 
@@ -25,7 +28,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // drag = 0.16277136 * friction^3
             //
             // EntityLivingBase#moveEntityWithHeading
-            final double aiMoveSpeed = getAiMoveSpeed(input.isSprinting());
+            final double aiMoveSpeed = getAiMoveSpeed(input.getSpeed(), input.getSlowness(), input.isSprinting());
             final float drag = MojangCocaine.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
@@ -67,13 +70,19 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         return iteration;
     }
 
-    private double getAiMoveSpeed(final boolean sprinting) {
+    private double getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, final boolean sprinting) {
         double aiMoveSpeed = 0.1F;
 
         if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangCocaine.SPRINT_MULTIPLIER;
 
-        // Speed & slowness potions aren't handled
-        // You'll need to figure that out yourself :)
+        // I did it myself, don't be a dick Hydrogen.
+        if(speed != null) {
+             aiMoveSpeed += (speed.getAmplifier() + 1) * 0.20000000298023224D * aiMoveSpeed;
+        }
+
+        if(slowness != null) {
+            aiMoveSpeed = (slowness.getAmplifier() + 1) * -0.15000000596046448D * aiMoveSpeed;
+        }
 
         return aiMoveSpeed;
     }
