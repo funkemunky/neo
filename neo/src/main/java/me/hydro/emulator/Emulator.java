@@ -10,7 +10,7 @@ import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.object.result.IterationResult;
-import me.hydro.emulator.util.MojangCocaine;
+import me.hydro.emulator.util.MojangConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,9 +78,9 @@ public class Emulator {
             tags.add("slowdown");
         }
 
-        if (Math.abs(motion.getMotionX()) < MojangCocaine.RESET) motion.setMotionX(0);
-        if (Math.abs(motion.getMotionY()) < MojangCocaine.RESET) motion.setMotionY(0);
-        if (Math.abs(motion.getMotionZ()) < MojangCocaine.RESET) motion.setMotionZ(0);
+        if (Math.abs(motion.getMotionX()) < MojangConstants.RESET) motion.setMotionX(0);
+        if (Math.abs(motion.getMotionY()) < MojangConstants.RESET) motion.setMotionY(0);
+        if (Math.abs(motion.getMotionZ()) < MojangConstants.RESET) motion.setMotionZ(0);
 
         if (input.isJumping()) {
             iteration = JUMP_HANDLER.handle(iteration);

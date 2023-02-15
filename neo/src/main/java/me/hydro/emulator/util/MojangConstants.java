@@ -4,9 +4,10 @@ package me.hydro.emulator.util;
  * Here we house the various "magic values" that
  * Mojang uses.
  */
-public interface MojangCocaine {
+public interface MojangConstants {
 
     float SPEED_AIR = 0.02F;
+    float SPEED_AIR_SPRINTING = 0.025999999F;
     float LAND_MOVEMENT_FACTOR_LEGACY = 0.16277136F;
 
     float UPWARDS_MOTION = 0.42F;

@@ -3,10 +3,8 @@ package me.hydro.emulator.handler.impl;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
-import me.hydro.emulator.util.MojangCocaine;
+import me.hydro.emulator.util.MojangConstants;
 import me.hydro.emulator.util.PotionEffect;
-
-import java.util.List;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
 
@@ -29,7 +27,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             //
             // EntityLivingBase#moveEntityWithHeading
             final double aiMoveSpeed = getAiMoveSpeed(input.getSpeed(), input.getSlowness(), input.isSprinting());
-            final float drag = MojangCocaine.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
+            final float drag = MojangConstants.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
             moveSpeed = (float) (aiMoveSpeed * drag);
@@ -38,9 +36,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // Found in EntityPlayer#onLivingUpdate (jumpMovementFactor of EntityLivingBase)
             // Set moveSpeed depending on sprint status
             // This isn't completely accurate :)
-            moveSpeed = input.isSprinting()
-                    ? (float) (MojangCocaine.SPEED_AIR + (MojangCocaine.SPEED_AIR * 0.3D))
-                    : MojangCocaine.SPEED_AIR;
+            moveSpeed = input.isSprinting() ? MojangConstants.SPEED_AIR_SPRINTING : MojangConstants.SPEED_AIR;
         }
 
         // Set friction to moveSpeed temporarily
@@ -62,7 +58,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // gravity and friction shiz
             emulator.getMotion().subtractY(0.08D);
 
-            emulator.getMotion().multiplyY(MojangCocaine.GRAVITY);
+            emulator.getMotion().multiplyY(MojangConstants.GRAVITY);
             emulator.getMotion().multiplyX(friction);
             emulator.getMotion().multiplyZ(friction);
         });
@@ -73,7 +69,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
     private double getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, final boolean sprinting) {
         double aiMoveSpeed = 0.1F;
 
-        if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangCocaine.SPRINT_MULTIPLIER;
+        if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangConstants.SPRINT_MULTIPLIER;
 
         // I did it myself, don't be a dick Hydrogen.
         if(speed != null) {
