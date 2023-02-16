@@ -15,13 +15,8 @@ public class MathHelper {
     private static final int SIN_COUNT = 4096;
     private static final float radFull = ((float) Math.PI * 2F);
     private static final float degFull = 360.0F;
-    private static final float radToIndex = 651.8986F;
     private static final float degToIndex = 11.377778F;
-    private static final float[] SIN_TABLE_FAST = new float[4096];
-    /**
-     * A table of sin values computed from 0 (inclusive) to 2*pi (exclusive), with steps of 2*PI / 65536.
-     */
-    private static final float[] SIN_TABLE = new float[65536];
+
     /**
      * Though it looks like an array, this is really more like a mapping.  Key (index of this array) is the upper 5 bits
      * of the result of multiplying a 32-bit unsigned integer by the B(2, 5) De Bruijn sequence 0x077CB531.  Value
@@ -35,17 +30,49 @@ public class MathHelper {
     private static final double[] field_181165_f;
     private static final String __OBFID = "CL_00001496";
 
+    private static final float[] SIN_TABLE_FAST = new float[4096], SIN_TABLE_FAST_NEW = new float[4096];
+    private static final float[] SIN_TABLE = new float[65536];
+    private static final float radToIndex = roundToFloat(651.8986469044033D);
+
+    public static float sin(FastMathType type, float value) {
+        switch (type) {
+            case VANILLA:
+            default:
+                return SIN_TABLE[(int) (value * 10430.378F) & 65535];
+            case FAST_LEGACY:
+                return SIN_TABLE_FAST[(int) (value * 651.8986F) & 4095];
+            case FAST_NEW:
+                return SIN_TABLE_FAST_NEW[(int) (value * radToIndex) & 4095];
+        }
+    }
+
+    public static float cos(FastMathType type, float value) {
+        switch (type) {
+            case VANILLA:
+            default:
+                return SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];
+            case FAST_LEGACY:
+                return SIN_TABLE_FAST[(int) ((value + ((float) Math.PI / 2F)) * 651.8986F) & 4095];
+            case FAST_NEW:
+                return SIN_TABLE_FAST_NEW[(int) (value * radToIndex + 1024.0F) & 4095];
+        }
+    }
+
     static {
         for (int i = 0; i < 65536; ++i) {
             SIN_TABLE[i] = (float) Math.sin((double) i * Math.PI * 2.0D / 65536.0D);
         }
 
         for (int j = 0; j < 4096; ++j) {
-            SIN_TABLE_FAST[j] = (float) Math.sin(((float) j + 0.5F) / 4096.0F * ((float) Math.PI * 2F));
+            SIN_TABLE_FAST[j] = (float) Math.sin((((float) j + 0.5F) / 4096.0F * ((float) Math.PI * 2F)));
         }
 
         for (int l = 0; l < 360; l += 90) {
-            SIN_TABLE_FAST[(int) ((float) l * 11.377778F) & 4095] = (float) Math.sin((float) l * 0.017453292F);
+            SIN_TABLE_FAST[(int) ((float) l * 11.377778F) & 4095] = (float) Math.sin(((float) l * 0.017453292F));
+        }
+
+        for (int j = 0; j < SIN_TABLE_FAST_NEW.length; ++j) {
+            SIN_TABLE_FAST_NEW[j] = roundToFloat(Math.sin((double) j * Math.PI * 2.0D / 4096.0D));
         }
 
         multiplyDeBruijnBitPosition = new int[]{0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};
@@ -61,18 +88,8 @@ public class MathHelper {
         }
     }
 
-    /**
-     * sin looked up in a table
-     */
-    public static float sin(boolean fastMath, float p_76126_0_) {
-        return fastMath ? SIN_TABLE_FAST[(int) (p_76126_0_ * 651.8986F) & 4095] : SIN_TABLE[(int) (p_76126_0_ * 10430.378F) & 65535];
-    }
-
-    /**
-     * cos looked up in the sin table with the appropriate offset
-     */
-    public static float cos(boolean fastMath, float value) {
-        return fastMath ? SIN_TABLE_FAST[(int) ((value + ((float) Math.PI / 2F)) * 651.8986F) & 4095] : SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];
+    private static float roundToFloat(double d) {
+        return (float) ((double) Math.round(d * 1.0E8D) / 1.0E8D);
     }
 
     public static float sqrt_float(float value) {
@@ -496,5 +513,11 @@ public class MathHelper {
         int k = clamp_int((int) (f5 * 255.0F), 0, 255);
         int l = clamp_int((int) (f6 * 255.0F), 0, 255);
         return j << 16 | k << 8 | l;
+    }
+
+    public enum FastMathType {
+        VANILLA,
+        FAST_LEGACY,
+        FAST_NEW
     }
 }

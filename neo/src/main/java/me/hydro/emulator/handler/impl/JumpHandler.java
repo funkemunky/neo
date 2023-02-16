@@ -32,8 +32,8 @@ public class JumpHandler implements MovementHandler {
         if (input.isSprinting()) {
             final float f = input.getYaw() * 0.017453292F;
 
-            motion.subtractX(MathHelper.sin(input.isFastMath(), f) * 0.2F);
-            motion.addZ(MathHelper.cos(input.isFastMath(), f) * 0.2F);
+            motion.subtractX(MathHelper.sin(input.getFastMathType(), f) * 0.2F);
+            motion.addZ(MathHelper.cos(input.getFastMathType(), f) * 0.2F);
         }
 
         return holder;

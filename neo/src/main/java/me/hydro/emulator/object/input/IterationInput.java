@@ -5,15 +5,17 @@ import lombok.Data;
 import me.hydro.emulator.util.PotionEffect;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
+import me.hydro.emulator.util.mcp.MathHelper;
 
 @Data
 @Builder
 public class IterationInput implements Cloneable {
 
-    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking, fastMath;
+    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking;
     private final int forward, strafing;
     private final float yaw;
     private final double aiMoveSpeed;
+    private final MathHelper.FastMathType fastMathType;
 
     private final AxisAlignedBB lastReportedBoundingBox;
     private final Vector to;
@@ -31,6 +33,8 @@ public class IterationInput implements Cloneable {
                 .forward(forward)
                 .strafing(strafing)
                 .yaw(yaw)
+                .aiMoveSpeed(aiMoveSpeed)
+                .fastMathType(fastMathType)
                 .lastReportedBoundingBox(lastReportedBoundingBox)
                 .to(to)
                 .effectSpeed(effectSpeed)

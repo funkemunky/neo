@@ -29,8 +29,8 @@ public class MoveFlyingHandler implements MovementHandler {
 
             final float yaw = iteration.getInput().getYaw();
 
-            float sin = MathHelper.sin(iteration.getInput().isFastMath(), yaw * (float) Math.PI / 180.0F);
-            float cos = MathHelper.cos(iteration.getInput().isFastMath(), yaw * (float) Math.PI / 180.0F);
+            float sin = MathHelper.sin(iteration.getInput().getFastMathType(), yaw * (float) Math.PI / 180.0F);
+            float cos = MathHelper.cos(iteration.getInput().getFastMathType(), yaw * (float) Math.PI / 180.0F);
 
             iteration.getMotion().addX(strafe * cos - forward * sin);
             iteration.getMotion().addZ(forward * cos + strafe * sin);
