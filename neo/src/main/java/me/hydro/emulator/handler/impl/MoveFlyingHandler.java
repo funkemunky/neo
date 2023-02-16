@@ -11,8 +11,6 @@ public class MoveFlyingHandler implements MovementHandler {
         float strafe = iteration.getMotion().getStrafing();
         float forward = iteration.getMotion().getForward();
 
-        System.out.println("strafe: " + strafe + " forward: " + forward);
-
         float combined = strafe * strafe + forward * forward;
 
         if (combined >= 1.0E-4F) {
