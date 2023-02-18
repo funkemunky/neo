@@ -108,7 +108,7 @@ public class MoveEntityHandler implements MovementHandler {
         }
 
         if(y != ogy) {
-            iteration.getTags().add("y-collided");
+            iteration.getTags().add("y-collided (" + ogy + "," + y + ")");
         }
 
         entityBB = entityBB.offset(0.0D, y, 0.0D);
@@ -275,10 +275,9 @@ public class MoveEntityHandler implements MovementHandler {
 
                     leFunnyBlock.transform(emulator);
                 }
-            } else {
-                if (y1 != y2) {
-                    emulator.getMotion().setMotionY(0);
-                }
+            }
+            if (y1 != y2) {
+                emulator.getMotion().setMotionY(0);
             }
 
             if (x1 != x2) {
