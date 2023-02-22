@@ -28,6 +28,8 @@ public class Emulator {
     private List<String> tags = Collections.emptyList();
 
     private final DataSupplier DATA_SUPPLIER;
+
+    private final int protocolVersion;
     private final JumpHandler JUMP_HANDLER = new JumpHandler();
     private final MoveFlyingHandler MOVE_FLYING_HANDLER = new MoveFlyingHandler();
     private final MoveEntityHandler MOVE_ENTITY_HANDLER = new MoveEntityHandler();
@@ -82,9 +84,11 @@ public class Emulator {
             tags.add("slowdown");
         }
 
-        if (Math.abs(motion.getMotionX()) < MojangConstants.RESET) motion.setMotionX(0);
-        if (Math.abs(motion.getMotionY()) < MojangConstants.RESET) motion.setMotionY(0);
-        if (Math.abs(motion.getMotionZ()) < MojangConstants.RESET) motion.setMotionZ(0);
+        final double RESET = protocolVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
+
+        if (Math.abs(motion.getMotionX()) < RESET) motion.setMotionX(0);
+        if (Math.abs(motion.getMotionY()) < RESET) motion.setMotionY(0);
+        if (Math.abs(motion.getMotionZ()) < RESET) motion.setMotionZ(0);
 
         if (input.isJumping()) {
             iteration = JUMP_HANDLER.handle(iteration);
