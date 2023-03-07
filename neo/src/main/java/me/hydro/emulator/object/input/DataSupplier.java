@@ -1,6 +1,7 @@
 package me.hydro.emulator.object.input;
 
 import me.hydro.emulator.collision.Block;
+import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
 import me.hydro.emulator.util.mcp.BlockPos;
 

@@ -11,6 +11,7 @@ import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.object.result.IterationResult;
 import me.hydro.emulator.util.MojangConstants;
+import me.hydro.emulator.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,11 +85,7 @@ public class Emulator {
             tags.add("slowdown");
         }
 
-        final double RESET = protocolVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
-
-        if (Math.abs(motion.getMotionX()) < RESET) motion.setMotionX(0);
-        if (Math.abs(motion.getMotionY()) < RESET) motion.setMotionY(0);
-        if (Math.abs(motion.getMotionZ()) < RESET) motion.setMotionZ(0);
+        applyResetConstant(motion);
 
         if (input.isJumping()) {
             iteration = JUMP_HANDLER.handle(iteration);
@@ -99,6 +96,47 @@ public class Emulator {
 
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());
+    }
+
+    public IterationResult runTeleportIteration(final Vector vector) {
+        final Motion motion = this.motion.clone();
+        final List<String> tags = new ArrayList<>();
+
+        final float forward = 0;
+        final float strafing = 0;
+
+        motion.setForward(forward);
+        motion.setStrafing(strafing);
+
+        tags.add("teleport");
+
+        // Create the new iteration holder
+        IterationHolder iteration = new IterationHolder(this, input, DATA_SUPPLIER);
+
+        // Setting previous motion to 0
+        motion.setMotionX(0);
+        motion.setMotionY(0);
+        motion.setMotionZ(0);
+
+        iteration.setMotion(motion);
+        iteration.setTags(tags);
+
+        // Setting the reset constant
+        applyResetConstant(motion);
+
+        iteration.setPredicted(vector);
+        iteration.setOffset(iteration.getInput().getTo().distance(iteration.getPredicted()));
+
+        return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
+                iteration.getTags());
+    }
+
+    private void applyResetConstant(Motion motion) {
+        final double RESET = protocolVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
+
+        if (Math.abs(motion.getMotionX()) < RESET) motion.setMotionX(0);
+        if (Math.abs(motion.getMotionY()) < RESET) motion.setMotionY(0);
+        if (Math.abs(motion.getMotionZ()) < RESET) motion.setMotionZ(0);
     }
 
     public void confirm(final IterationHolder iteration) {
