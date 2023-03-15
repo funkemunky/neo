@@ -20,6 +20,14 @@ public class Vector {
         return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
     }
 
+    public double distanceSqrt(final Vector other) {
+        final double deltaX = other.getX() - x;
+        final double deltaY = other.getY() - y;
+        final double deltaZ = other.getZ() - z;
+
+        return (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ);
+    }
+
     public BlockPos toBlockPos() {
         return new BlockPos(
                 MathHelper.floor_double(x),

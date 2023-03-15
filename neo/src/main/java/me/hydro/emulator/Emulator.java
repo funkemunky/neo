@@ -12,6 +12,8 @@ import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.object.result.IterationResult;
 import me.hydro.emulator.util.MojangConstants;
 import me.hydro.emulator.util.Vector;
+import me.hydro.emulator.util.mcp.AxisAlignedBB;
+import me.hydro.emulator.util.mcp.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,7 +110,25 @@ public class Emulator {
         motion.setForward(forward);
         motion.setStrafing(strafing);
 
-        tags.add("teleport");
+        IterationInput input = IterationInput.builder()
+                .jumping(false)
+                .forward(0)
+                .strafing(0)
+                .sprinting(false)
+                .usingItem(false)
+                .hitSlowdown(false)
+                .aiMoveSpeed(1)
+                .fastMathType(MathHelper.FastMathType.FAST_LEGACY)
+                .sneaking(false)
+                .ground(true)
+                .to(vector)
+                .yaw(0)
+                .lastReportedBoundingBox(new AxisAlignedBB(vector, 0.6, 1.8))
+                .waitingForTeleport(true)
+                .build();
+
+        if(input != null)
+            input.setWaitingForTeleport(true);
 
         // Create the new iteration holder
         IterationHolder iteration = new IterationHolder(this, input, DATA_SUPPLIER);
@@ -126,6 +146,8 @@ public class Emulator {
 
         iteration.setPredicted(vector);
         iteration.setOffset(iteration.getInput().getTo().distance(iteration.getPredicted()));
+
+        iteration.getTags().add("teleport");
 
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());

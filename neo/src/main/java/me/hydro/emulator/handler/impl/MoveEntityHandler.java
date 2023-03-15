@@ -96,7 +96,10 @@ public class MoveEntityHandler implements MovementHandler {
             }
         }
 
-        final AxisAlignedBB bb = lastReportedBoundingBox.clone();
+        AxisAlignedBB bb = lastReportedBoundingBox.clone();
+
+        //Distance greater than 20 blocks
+
         final List<AxisAlignedBB> collidingBoxes = new ArrayList<>(iteration.getDataSupplier().getCollidingBoxes(bb.addCoord(x, y, z)));
 
         AxisAlignedBB entityBB = lastReportedBoundingBox;

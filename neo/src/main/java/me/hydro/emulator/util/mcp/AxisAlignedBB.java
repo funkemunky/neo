@@ -13,6 +13,13 @@ public class AxisAlignedBB {
     public double maxY;
     public double maxZ;
 
+    public AxisAlignedBB(Vector vec, double width, double height) {
+        this(vec.getX(), vec.getY(), vec.getZ(), vec.getX(), vec.getY(), vec.getZ());
+
+        expand(width / 2, 0, width / 2);
+        maxY += height;
+    }
+
     public AxisAlignedBB(AxisAlignedBB bb) {
         this.minX = bb.minX;
         this.minY = bb.minY;
