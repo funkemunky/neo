@@ -263,24 +263,16 @@ public class MoveEntityHandler implements MovementHandler {
             if (block != null) {
                 /* fences need to be implemented here. good luck have fun :) */
 
-                final Block finalBlock = iteration.getDataSupplier().getBlockAt(
-                        blockPos.getX(),
-                        blockPos.getY(),
-                        blockPos.getZ()
-                );
-
-                if (y1 != y2 && finalBlock instanceof CollisionLandable) {
-                    ((CollisionLandable)finalBlock).onLand(emulator);
+                if (y1 != y2) {
+                    ((CollisionLandable) block).onLand(emulator);
+                    emulator.getTags().add("landed");
                 }
 
-                if (collidedGround && !iteration.getInput().isSneaking() && finalBlock instanceof VerticalCollisionBlock) {
-                    final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) finalBlock;
+                if (collidedGround && block instanceof VerticalCollisionBlock) {
+                    final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) block;
 
                     leFunnyBlock.transform(emulator);
                 }
-            }
-            if (y1 != y2) {
-                emulator.getMotion().setMotionY(0);
             }
 
             if (x1 != x2) {

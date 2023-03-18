@@ -12,5 +12,6 @@ public class BlockSoulSand extends Block implements CollisionBlockState {
         iteration.getMotion().multiplyX(0.4D);
         iteration.getMotion().multiplyY(0.4D);
         iteration.getMotion().multiplyZ(0.4D);
+        iteration.getTags().add("soul-sand");
     }
 }
