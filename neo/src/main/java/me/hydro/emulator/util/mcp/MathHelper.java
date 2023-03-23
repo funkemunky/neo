@@ -34,6 +34,14 @@ public class MathHelper {
     private static final float[] SIN_TABLE = new float[65536];
     private static final float radToIndex = roundToFloat(651.8986469044033D);
 
+    public static float sin(float value) {
+        return SIN_TABLE[(int) (value * 10430.378F) & 65535];
+    }
+
+    public static float cos(float value) {
+        return SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];
+    }
+
     public static float sin(FastMathType type, float value) {
         switch (type) {
             case VANILLA:

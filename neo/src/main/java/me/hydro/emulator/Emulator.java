@@ -27,6 +27,7 @@ public class Emulator {
     private double offset = 0;
     private float friction;
     private boolean inWeb;
+    private AxisAlignedBB lastReportedBoundingBox;
 
     private List<String> tags = Collections.emptyList();
 

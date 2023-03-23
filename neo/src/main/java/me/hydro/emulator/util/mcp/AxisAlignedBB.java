@@ -31,12 +31,12 @@ public class AxisAlignedBB {
     }
 
     public AxisAlignedBB(double x1, double y1, double z1, double x2, double y2, double z2) {
-        this.minX = Math.min(x1, x2);
-        this.minY = Math.min(y1, y2);
-        this.minZ = Math.min(z1, z2);
-        this.maxX = Math.max(x1, x2);
-        this.maxY = Math.max(y1, y2);
-        this.maxZ = Math.max(z1, z2);
+        this.minX = x1 < x2 ? x1 : x2;
+        this.minY = y1 < y2 ? y1 : y2;
+        this.minZ = z1 < z2 ? z1 : z2;
+        this.maxX = x1 > x2 ? x1 : x2;
+        this.maxY = y1 > y2 ? y1 : y2;
+        this.maxZ = z1 > z2 ? z1 : z2;
     }
 
     /**
@@ -146,10 +146,8 @@ public class AxisAlignedBB {
                 }
             }
 
-            return p_72316_2_;
-        } else {
-            return p_72316_2_;
         }
+        return p_72316_2_;
     }
 
     /**
@@ -175,10 +173,8 @@ public class AxisAlignedBB {
                 }
             }
 
-            return p_72323_2_;
-        } else {
-            return p_72323_2_;
         }
+        return p_72323_2_;
     }
 
     /**
@@ -204,10 +200,8 @@ public class AxisAlignedBB {
                 }
             }
 
-            return p_72322_2_;
-        } else {
-            return p_72322_2_;
         }
+        return p_72322_2_;
     }
 
     /**

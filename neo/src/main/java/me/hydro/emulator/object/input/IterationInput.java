@@ -2,6 +2,7 @@ package me.hydro.emulator.object.input;
 
 import lombok.Builder;
 import lombok.Data;
+import me.hydro.emulator.Emulator;
 import me.hydro.emulator.util.PotionEffect;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
@@ -43,6 +44,11 @@ public class IterationInput implements Cloneable {
                 .effectJump(effectJump)
                 .waitingForTeleport(waitingForTeleport)
                 .build();
+    }
+
+    public AxisAlignedBB getLastReportedBoundingBox(Emulator emulator) {
+        return emulator.getLastReportedBoundingBox() == null
+                ? lastReportedBoundingBox : emulator.getLastReportedBoundingBox();
     }
 
 

@@ -46,7 +46,8 @@ public class MoveEntityHandler implements MovementHandler {
         double d4 = y;
         double d5 = z;
 
-        final AxisAlignedBB lastReportedBoundingBox = iteration.getInput().getLastReportedBoundingBox().clone();
+        final AxisAlignedBB lastReportedBoundingBox = iteration.getInput()
+                .getLastReportedBoundingBox(iteration.getEmulator()).clone();
         final boolean edges = iteration.getInput().isSneaking() && iteration.getInput().isGround();
 
         if (edges) {
@@ -104,14 +105,12 @@ public class MoveEntityHandler implements MovementHandler {
 
         AxisAlignedBB entityBB = lastReportedBoundingBox;
 
-        final double ogx = x, ogy = y, ogz = z;
-
         for (AxisAlignedBB axisalignedbb1 : collidingBoxes) {
             y = axisalignedbb1.calculateYOffset(entityBB, y);
         }
 
-        if(y != ogy) {
-            iteration.getTags().add("y-collided (" + ogy + "," + y + ")");
+        if(y != d4) {
+            iteration.getTags().add("y-collided");
         }
 
         entityBB = entityBB.offset(0.0D, y, 0.0D);
@@ -120,8 +119,8 @@ public class MoveEntityHandler implements MovementHandler {
             x = axisalignedbb2.calculateXOffset(entityBB, x);
         }
 
-        if(x != ogx) {
-            iteration.getTags().add("x-collided");
+        if(x != d3) {
+            iteration.getTags().add("x-collided (" + x + ")");
         }
 
         entityBB = entityBB.offset(x, 0.0D, 0.0D);
@@ -130,7 +129,7 @@ public class MoveEntityHandler implements MovementHandler {
             z = axisalignedbb13.calculateZOffset(entityBB, z);
         }
 
-        if(z != ogz) {
+        if(z != d5) {
             iteration.getTags().add("z-collided");
         }
 
@@ -256,6 +255,8 @@ public class MoveEntityHandler implements MovementHandler {
             final int collisionX = MathHelper.floor_double(iteration.getPredicted().getX());
             final int collisionY = MathHelper.floor_double(iteration.getPredicted().getY() - 0.20000000298023224D);
             final int collisionZ = MathHelper.floor_double(iteration.getPredicted().getZ());
+
+            emulator.setLastReportedBoundingBox(finalBounding);
 
             BlockPos blockPos = new BlockPos(collisionX, collisionY, collisionZ);
             Block block = iteration.getDataSupplier().getBlockAt(blockPos);
