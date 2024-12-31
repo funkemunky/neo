@@ -21,11 +21,16 @@ public enum MoveTag {
     SLIME("Slime"),
     SLIME_LANDED("Slime_Landed"),
     GROUND("Ground"),
+    BAD_OFFSET("Bad_Offset"),
+    VELOCITY("Velocity"),
+    SLOP_MOVE("Slop_Move (003)"),
     AIR("Air");
 
     private final String name;
+    private final TagData tagData;
 
     MoveTag(String name) {
         this.name = name;
+        this.tagData = new TagData(this);
     }
 }

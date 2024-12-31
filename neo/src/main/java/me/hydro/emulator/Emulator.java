@@ -17,8 +17,8 @@ import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
 import me.hydro.emulator.util.mcp.MathHelper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Emulator {
@@ -30,7 +30,7 @@ public class Emulator {
     private boolean inWeb;
     private AxisAlignedBB lastReportedBoundingBox;
 
-    private List<TagData> tags = new ArrayList<>(5);
+    private Set<TagData> tags = new HashSet<>();
 
     private final DataSupplier DATA_SUPPLIER;
 
@@ -42,7 +42,7 @@ public class Emulator {
 
     public IterationResult runIteration(final IterationInput input) {
         final Motion motion = this.motion.clone();
-        final List<TagData> tags = new ArrayList<>();
+        final Set<TagData> tags = new HashSet<>();
 
         float forward = input.getForward();
         float strafing = input.getStrafing();
@@ -104,7 +104,7 @@ public class Emulator {
 
     public IterationResult runTeleportIteration(final Vector vector) {
         final Motion motion = this.motion.clone();
-        final List<TagData> tags = new ArrayList<>();
+        final Set<TagData> tags = new HashSet<>();
 
         final float forward = 0;
         final float strafing = 0;
@@ -163,10 +163,6 @@ public class Emulator {
         if (Math.abs(motion.getMotionZ()) < RESET) motion.setMotionZ(0);
     }
 
-
-    /**
-     * @param iteration
-     */
     public void confirm(final IterationHolder iteration) {
         this.motion = iteration.getMotion();
         this.input = iteration.getInput();
@@ -175,6 +171,10 @@ public class Emulator {
         this.tags = iteration.getTags();
 
         runPostActions(iteration);
+    }
+
+    public boolean containsTag(MoveTag tag) {
+        return tags.contains(tag.getTagData());
     }
 
     public void runPostActions(final IterationHolder iteration) {

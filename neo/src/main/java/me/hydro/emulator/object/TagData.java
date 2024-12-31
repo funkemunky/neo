@@ -1,17 +1,16 @@
 package me.hydro.emulator.object;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
 
+@Getter
 public class TagData {
     private final MoveTag moveTag;
 
     public TagData(MoveTag moveTag) {
         this.moveTag = moveTag;
-    }
-
-    public MoveTag getMoveTag() {
-        return moveTag;
     }
 
     public String toString() {

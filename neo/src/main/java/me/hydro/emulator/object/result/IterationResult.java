@@ -1,23 +1,18 @@
 package me.hydro.emulator.object.result;
 
-import lombok.Data;
 import me.hydro.emulator.object.MoveTag;
 import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.util.Vector;
 
-import java.util.List;
+import java.util.Set;
 
-@Data
-public class IterationResult {
 
-    private final double offset;
+public record IterationResult(double offset, IterationHolder iteration, Vector predicted, Motion motion,
+                              Set<TagData> tags) {
 
-    private final IterationHolder iteration;
-
-    private final Vector predicted;
-    private final Motion motion;
-
-    private final List<TagData> tags;
+    public boolean containsTag(MoveTag tag) {
+        return tags.contains(tag.getTagData());
+    }
 }
