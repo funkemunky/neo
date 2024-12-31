@@ -5,6 +5,8 @@ import me.hydro.emulator.handler.impl.JumpHandler;
 import me.hydro.emulator.handler.impl.MoveEntityHandler;
 import me.hydro.emulator.handler.impl.MoveEntityWithHeadingHandler;
 import me.hydro.emulator.handler.impl.MoveFlyingHandler;
+import me.hydro.emulator.object.MoveTag;
+import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.input.DataSupplier;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
@@ -16,7 +18,6 @@ import me.hydro.emulator.util.mcp.AxisAlignedBB;
 import me.hydro.emulator.util.mcp.MathHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -29,7 +30,7 @@ public class Emulator {
     private boolean inWeb;
     private AxisAlignedBB lastReportedBoundingBox;
 
-    private List<String> tags = Collections.emptyList();
+    private List<TagData> tags = new ArrayList<>(5);
 
     private final DataSupplier DATA_SUPPLIER;
 
@@ -41,7 +42,7 @@ public class Emulator {
 
     public IterationResult runIteration(final IterationInput input) {
         final Motion motion = this.motion.clone();
-        final List<String> tags = new ArrayList<>();
+        final List<TagData> tags = new ArrayList<>();
 
         float forward = input.getForward();
         float strafing = input.getStrafing();
@@ -53,7 +54,7 @@ public class Emulator {
             forward *= 0.3F;
             strafing *= 0.3F;
 
-            tags.add("sneaking");
+            tags.add(new TagData(MoveTag.SNEAKING));
         }
 
         // Are they using an item? Slow them down a little more
@@ -61,7 +62,7 @@ public class Emulator {
             forward *= 0.2F;
             strafing *= 0.2F;
 
-            tags.add("using");
+            tags.add(new TagData(MoveTag.USING));
         }
 
         // Mojang multiplies by 0.98F, so do we
@@ -85,14 +86,14 @@ public class Emulator {
             motion.multiplyX(0.6D);
             motion.multiplyZ(0.6D);
 
-            tags.add("slowdown");
+            tags.add(new TagData(MoveTag.HIT_SLOW));
         }
 
         applyResetConstant(motion);
 
         if (input.isJumping()) {
             iteration = JUMP_HANDLER.handle(iteration);
-            tags.add("jump");
+            tags.add(new TagData(MoveTag.JUMP));
         }
 
         iteration = MOVE_ENTITY_WITH_HEADING_HANDLER.handle(iteration);
@@ -103,7 +104,7 @@ public class Emulator {
 
     public IterationResult runTeleportIteration(final Vector vector) {
         final Motion motion = this.motion.clone();
-        final List<String> tags = new ArrayList<>();
+        final List<TagData> tags = new ArrayList<>();
 
         final float forward = 0;
         final float strafing = 0;
@@ -148,7 +149,7 @@ public class Emulator {
         iteration.setPredicted(vector);
         iteration.setOffset(iteration.getInput().getTo().distance(iteration.getPredicted()));
 
-        iteration.getTags().add("teleport");
+        iteration.getTags().add(new TagData(MoveTag.TELEPORT));
 
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());
@@ -162,6 +163,10 @@ public class Emulator {
         if (Math.abs(motion.getMotionZ()) < RESET) motion.setMotionZ(0);
     }
 
+
+    /**
+     * @param iteration
+     */
     public void confirm(final IterationHolder iteration) {
         this.motion = iteration.getMotion();
         this.input = iteration.getInput();

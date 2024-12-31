@@ -5,7 +5,9 @@ import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionLandable;
 import me.hydro.emulator.collision.FrictionModifier;
 import me.hydro.emulator.collision.VerticalCollisionBlock;
-import me.hydro.emulator.object.iteration.IterationHolder;
+import me.hydro.emulator.object.InformationData;
+import me.hydro.emulator.object.MoveTag;
+import me.hydro.emulator.object.TagData;
 
 public class BlockSlime extends Block implements CollisionLandable, VerticalCollisionBlock, FrictionModifier {
 
@@ -15,7 +17,7 @@ public class BlockSlime extends Block implements CollisionLandable, VerticalColl
             double factor = 0.4D + Math.abs(iteration.getMotion().getMotionY()) * 0.2D;
             iteration.getMotion().multiplyX(factor);
             iteration.getMotion().multiplyZ(factor);
-            iteration.getTags().add("slime");
+            iteration.getTags().add(new TagData(MoveTag.SLIME));
         }
     }
 
@@ -25,7 +27,7 @@ public class BlockSlime extends Block implements CollisionLandable, VerticalColl
             super.onLand(iteration);
         } else if(iteration.getMotion().getMotionY() < 0D) {
             iteration.getMotion().multiplyY(-1);
-            iteration.getTags().add("slime-land (" + iteration.getMotion().getMotionY() + ")");
+            iteration.getTags().add(new InformationData(MoveTag.SLIME_LANDED, String.valueOf(iteration.getMotion().getMotionY())));
         }
     }
 

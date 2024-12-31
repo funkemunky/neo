@@ -1,6 +1,8 @@
 package me.hydro.emulator.handler.impl;
 
 import me.hydro.emulator.handler.MovementHandler;
+import me.hydro.emulator.object.MoveTag;
+import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
@@ -21,7 +23,7 @@ public class JumpHandler implements MovementHandler {
 
         // Set motion Y to 0.42F (and add our corresponding tag)
         motion.setMotionY(MojangConstants.UPWARDS_MOTION);
-        holder.getTags().add("jump");
+        holder.getTags().add(new TagData(MoveTag.JUMP));
 
         // Handling jump potion effect
         if(input.getEffectJump() != null) {
