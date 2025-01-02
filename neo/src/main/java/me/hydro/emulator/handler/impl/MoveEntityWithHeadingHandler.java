@@ -3,13 +3,13 @@ package me.hydro.emulator.handler.impl;
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.FrictionModifier;
 import me.hydro.emulator.handler.MovementHandler;
-import me.hydro.emulator.object.MoveTag;
-import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.MojangConstants;
 import me.hydro.emulator.util.PotionEffect;
 import me.hydro.emulator.util.Vector;
+import me.hydro.emulator.util.mcp.AxisAlignedBB;
+import me.hydro.emulator.util.mcp.MathHelper;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
 
@@ -39,12 +39,12 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
 
             // Set moveSpeed to aiMoveSpeed * drag
             moveSpeed = (aiMoveSpeed * drag);
-            iteration.getTags().add(new TagData(MoveTag.GROUND));
+            iteration.getTags().add("ground");
         } else {
             // Found in EntityPlayer#onLivingUpdate (jumpMovementFactor of EntityLivingBase)
             // Set moveSpeed depending on sprint status
             moveSpeed = input.isSprinting() ? MojangConstants.SPEED_AIR_SPRINTING : MojangConstants.SPEED_AIR;
-            iteration.getTags().add(new TagData(MoveTag.AIR));
+            iteration.getTags().add("air");
         }
 
         // Set friction to moveSpeed temporarily
@@ -63,7 +63,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         iteration.addPostAction(emulator -> {
             if (emulator.getMotion() == null) return;
 
-            // gravity and friction
+            // gravity and friction shiz
             emulator.getMotion().subtractY(0.08D);
 
             emulator.getMotion().multiplyY(MojangConstants.GRAVITY);

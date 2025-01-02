@@ -1,8 +1,6 @@
 package me.hydro.emulator.object.result;
 
 import lombok.Data;
-import me.hydro.emulator.object.MoveTag;
-import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.util.Vector;
@@ -19,5 +17,5 @@ public class IterationResult {
     private final Vector predicted;
     private final Motion motion;
 
-    private final List<TagData> tags;
+    private final List<String> tags;
 }

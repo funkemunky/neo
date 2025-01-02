@@ -1,12 +1,13 @@
 package me.hydro.emulator.handler.impl;
 
+import me.hydro.emulator.Emulator;
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionBlockState;
+import me.hydro.emulator.collision.CollisionLandable;
 import me.hydro.emulator.collision.VerticalCollisionBlock;
+import me.hydro.emulator.collision.impl.BlockSlime;
+import me.hydro.emulator.collision.impl.BlockSoulSand;
 import me.hydro.emulator.handler.MovementHandler;
-import me.hydro.emulator.object.InformationData;
-import me.hydro.emulator.object.MoveTag;
-import me.hydro.emulator.object.TagData;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
@@ -21,6 +22,7 @@ public class MoveEntityHandler implements MovementHandler {
     /**
      * The dogshit code inside here can be traced back to the best
      * game development studio in the world, Mojang.
+     *
      * Entity#moveEntity
      */
 
@@ -37,7 +39,7 @@ public class MoveEntityHandler implements MovementHandler {
             iteration.getMotion().setMotionX(0);
             iteration.getMotion().setMotionY(0);
             iteration.getMotion().setMotionZ(0);
-            iteration.getTags().add(new TagData(MoveTag.WEB));
+            iteration.getTags().add("web");
         }
 
         double d3 = x;
@@ -49,7 +51,7 @@ public class MoveEntityHandler implements MovementHandler {
         final boolean edges = iteration.getInput().isSneaking() && iteration.getInput().isGround();
 
         if (edges) {
-            iteration.getTags().add(new TagData(MoveTag.EDGES));
+            iteration.getTags().add("edges");
 
             double magicSteppingValue = iteration.getEmulator().getProtocolVersion() > 47 ? 0.03D : 0.05D;
 
@@ -108,7 +110,7 @@ public class MoveEntityHandler implements MovementHandler {
         }
 
         if(y != d4) {
-            iteration.getTags().add(new InformationData(MoveTag.Y_COLLIDED, String.format("%.4f, %.4f", y, d4)));
+            iteration.getTags().add("y-collided");
         }
 
         entityBB = entityBB.offset(0.0D, y, 0.0D);
@@ -118,7 +120,7 @@ public class MoveEntityHandler implements MovementHandler {
         }
 
         if(x != d3) {
-            iteration.getTags().add(new InformationData(MoveTag.X_COLLIDED, String.format("%.4f, %.4f", x, d3)));
+            iteration.getTags().add("x-collided (" + x + ")");
         }
 
         entityBB = entityBB.offset(x, 0.0D, 0.0D);
@@ -128,7 +130,7 @@ public class MoveEntityHandler implements MovementHandler {
         }
 
         if(z != d5) {
-            iteration.getTags().add(new InformationData(MoveTag.Z_COLLIDED, String.format("%.4f, %.4f", z, d5)));
+            iteration.getTags().add("z-collided");
         }
 
         entityBB = entityBB.offset(0.0D, 0.0D, z);
@@ -140,7 +142,7 @@ public class MoveEntityHandler implements MovementHandler {
         // I am not bothering to clean up this absolute abomination of an if block
         // This is Mojang's dogshit, not mine
         if (flag1 && (d3 != x || d5 != z)) {
-            iteration.getTags().add(new TagData(MoveTag.STEP));
+            iteration.getTags().add("step");
 
             double d11 = x;
             double d7 = y;
@@ -263,11 +265,13 @@ public class MoveEntityHandler implements MovementHandler {
                 /* fences need to be implemented here. good luck have fun :) */
 
                 if (y1 != y2) {
-                    block.onLand(emulator);
-                    emulator.getTags().add(new TagData(MoveTag.LANDED));
+                    ((CollisionLandable) block).onLand(emulator);
+                    emulator.getTags().add("landed");
                 }
 
-                if (collidedGround && block instanceof VerticalCollisionBlock leFunnyBlock) {
+                if (collidedGround && block instanceof VerticalCollisionBlock) {
+                    final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) block;
+
                     leFunnyBlock.transform(emulator);
                 }
             }
