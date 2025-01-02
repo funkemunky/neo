@@ -8,9 +8,7 @@ import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -29,7 +27,7 @@ public class IterationHolder {
 
     private List<Consumer<Emulator>> postEmulation = new ArrayList<>();
 
-    private Set<TagData> tags = new HashSet<>();
+    private List<TagData> tags = new ArrayList<>();
 
     private float friction;
 
