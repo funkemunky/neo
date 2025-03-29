@@ -155,6 +155,9 @@ public class Emulator {
     }
 
     private void applyResetConstant(Motion motion) {
+        if(protocolVersion >= 767) { //Not a thing in later versions
+            return;
+        }
         final double RESET = protocolVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
 
         if (Math.abs(motion.getMotionX()) < RESET) motion.setMotionX(0);
