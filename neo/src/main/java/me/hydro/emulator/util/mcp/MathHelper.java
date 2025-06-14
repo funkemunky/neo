@@ -48,7 +48,7 @@ public class MathHelper {
             default:
                 return SIN_TABLE[(int) (value * 10430.378F) & 65535];
             case FAST_LEGACY:
-                return SIN_TABLE_FAST[(int) (value * 651.8986F) & 4095];
+                return SIN_TABLE_FAST[(int) (value * radToIndex) & 4095];
             case FAST_NEW:
                 return SIN_TABLE_FAST_NEW[(int) (value * radToIndex) & 4095];
         }
@@ -71,12 +71,8 @@ public class MathHelper {
             SIN_TABLE[i] = (float) Math.sin((double) i * Math.PI * 2.0D / 65536.0D);
         }
 
-        for (int j = 0; j < 4096; ++j) {
-            SIN_TABLE_FAST[j] = (float) Math.sin((((float) j + 0.5F) / 4096.0F * ((float) Math.PI * 2F)));
-        }
-
-        for (int l = 0; l < 360; l += 90) {
-            SIN_TABLE_FAST[(int) ((float) l * 11.377778F) & 4095] = (float) Math.sin(((float) l * 0.017453292F));
+        for (int j = 0; j < SIN_TABLE_FAST.length; ++j) {
+            SIN_TABLE_FAST[j] = roundToFloat(Math.sin((double) j * Math.PI * 2.0D / 4096.0D));
         }
 
         for (int j = 0; j < SIN_TABLE_FAST_NEW.length; ++j) {
@@ -89,10 +85,10 @@ public class MathHelper {
         field_181165_f = new double[257];
 
         for (int k = 0; k < 257; ++k) {
-            double d1 = (double) k / 256.0D;
-            double d0 = Math.asin(d1);
-            field_181165_f[k] = Math.cos(d0);
-            field_181164_e[k] = d0;
+            double d0 = (double) k / 256.0D;
+            double d1 = Math.asin(d0);
+            field_181165_f[k] = Math.cos(d1);
+            field_181164_e[k] = d1;
         }
     }
 
@@ -526,6 +522,7 @@ public class MathHelper {
     public enum FastMathType {
         VANILLA,
         FAST_LEGACY,
+        OPTIFINE,
         FAST_NEW
     }
 }

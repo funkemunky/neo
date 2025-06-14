@@ -8,7 +8,7 @@ public interface MojangConstants {
 
     float SPEED_AIR = 0.02F;
     float SPEED_AIR_SPRINTING = 0.025999999F;
-    float LAND_MOVEMENT_FACTOR_LEGACY = 0.16277136F;
+    float LAND_MOVEMENT_FACTOR_LEGACY = 0.16277137F;
 
     float UPWARDS_MOTION = 0.42F;
 
