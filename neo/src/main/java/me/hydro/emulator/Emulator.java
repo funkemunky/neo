@@ -64,6 +64,10 @@ public class Emulator {
             tags.add("using");
         }
 
+        if(input.isSprinting()) {
+            tags.add("sprinting");
+        }
+
         // Mojang multiplies by 0.98F, so do we
         forward *= 0.9800000190734863F;
         strafing *= 0.9800000190734863F;

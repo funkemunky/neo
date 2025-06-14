@@ -35,6 +35,8 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             final float aiMoveSpeed = getAiMoveSpeed(input.getEffectSpeed(), input.getEffectSlow(),
                     input.getAiMoveSpeed(), input.isSprinting());
 
+            iteration.getTags().add("ai-move-speed (" + aiMoveSpeed + ")");
+
             final float drag = MojangConstants.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
