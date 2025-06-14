@@ -8,7 +8,6 @@ import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.MojangConstants;
 import me.hydro.emulator.util.PotionEffect;
 import me.hydro.emulator.util.Vector;
-import me.hydro.emulator.util.mcp.AxisAlignedBB;
 import me.hydro.emulator.util.mcp.MathHelper;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
@@ -24,6 +23,8 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
                 ? getBlockBelowFriction(iteration) * 0.91F
                 : 0.91F;
 
+        iteration.getTags().add("friction (" + friction + ")");
+
         // Variable (currently unassigned) where we'll put our moveSpeed
         float moveSpeed;
 
@@ -32,7 +33,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // drag = 0.16277136 * friction^3
             //
             // EntityLivingBase#moveEntityWithHeading
-            final float aiMoveSpeed = getAiMoveSpeed(input.getEffectSpeed(), input.getEffectSlow(),
+            final double aiMoveSpeed = getAiMoveSpeed(input.getEffectSpeed(), input.getEffectSlow(),
                     input.getAiMoveSpeed(), input.isSprinting());
 
             iteration.getTags().add("ai-move-speed (" + aiMoveSpeed + ")");
@@ -40,7 +41,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             final float drag = MojangConstants.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
-            moveSpeed = (aiMoveSpeed * drag);
+            moveSpeed = ((float)aiMoveSpeed * drag);
             iteration.getTags().add("ground");
         } else {
             // Found in EntityPlayer#onLivingUpdate (jumpMovementFactor of EntityLivingBase)
@@ -77,9 +78,11 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
     }
 
     private float getBlockBelowFriction(IterationHolder iteration) {
-        Vector position = iteration.getInput().getLastReportedBoundingBox().resetPositionToBB();
+        Vector position = iteration.getInput().getTo().clone();
 
-        position.setY(position.getY() - 1D);
+        position.setX(MathHelper.floor_double(position.getX()));
+        position.setY(MathHelper.floor_double(position.getY()) - 1D);
+        position.setZ(MathHelper.floor_double(position.getZ()));
 
         Block block = iteration.getDataSupplier().getBlockAt(position.toBlockPos());
 
@@ -90,7 +93,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         return 0.6f;
     }
 
-    private float getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, double aiMoveSpeed, final boolean sprinting) {
+    private double getAiMoveSpeed(final PotionEffect speed, PotionEffect slowness, double aiMoveSpeed, final boolean sprinting) {
 
         if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangConstants.SPRINT_MULTIPLIER;
 
@@ -103,6 +106,6 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             aiMoveSpeed = (slowness.getAmplifier() + 1) * -0.15000000596046448D * aiMoveSpeed;
         }
 
-        return (float) aiMoveSpeed;
+        return aiMoveSpeed;
     }
 }
