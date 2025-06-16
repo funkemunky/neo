@@ -100,7 +100,7 @@ public class Vec3
         double d0 = vec.xCoord - this.xCoord;
         double d1 = vec.yCoord - this.yCoord;
         double d2 = vec.zCoord - this.zCoord;
-        return (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
+        return MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
     }
 
     /**
@@ -121,6 +121,30 @@ public class Vec3
     {
         return (double)MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
     }
+
+    /**
+     * Returns the square of the length of the vector.
+     */
+    public double lengthSquared()
+    {
+        return this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord;
+    }
+
+    public Vec3 multiply(double value) {
+        return this.multiply(value, value, value);
+    }
+
+    public Vec3 multiply(Vec3 vec) {
+        return this.multiply(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    /**
+     * Returns a new vector with the result of this vector multiplied by the specified vector.
+     */
+    public Vec3 multiply(double x, double y, double z) {
+        return new Vec3(this.xCoord * x, this.yCoord * y, this.zCoord * z);
+    }
+
 
     /**
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the

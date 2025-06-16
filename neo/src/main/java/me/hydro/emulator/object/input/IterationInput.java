@@ -12,7 +12,7 @@ import me.hydro.emulator.util.mcp.MathHelper;
 @Builder
 public class IterationInput implements Cloneable {
 
-    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking;
+    private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking, modernMovement;
     private boolean waitingForTeleport;
     private final int forward, strafing;
     private final float yaw;
@@ -35,6 +35,7 @@ public class IterationInput implements Cloneable {
                 .forward(forward)
                 .strafing(strafing)
                 .yaw(yaw)
+                .modernMovement(modernMovement)
                 .aiMoveSpeed(aiMoveSpeed)
                 .fastMathType(fastMathType)
                 .lastReportedBoundingBox(lastReportedBoundingBox)

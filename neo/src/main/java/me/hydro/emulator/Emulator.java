@@ -1,16 +1,14 @@
 package me.hydro.emulator;
 
 import lombok.Data;
-import me.hydro.emulator.handler.impl.JumpHandler;
-import me.hydro.emulator.handler.impl.MoveEntityHandler;
-import me.hydro.emulator.handler.impl.MoveEntityWithHeadingHandler;
-import me.hydro.emulator.handler.impl.MoveFlyingHandler;
+import me.hydro.emulator.handler.impl.*;
 import me.hydro.emulator.object.input.DataSupplier;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.object.result.IterationResult;
 import me.hydro.emulator.util.MojangConstants;
+import me.hydro.emulator.util.Vec2;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
 import me.hydro.emulator.util.mcp.MathHelper;
@@ -36,6 +34,7 @@ public class Emulator {
     private final int protocolVersion;
     private final JumpHandler JUMP_HANDLER = new JumpHandler();
     private final MoveFlyingHandler MOVE_FLYING_HANDLER = new MoveFlyingHandler();
+    private final ApplyMovementInputHandler APPLY_MOVEMENT_INPUT_HANDLER = new ApplyMovementInputHandler();
     private final MoveEntityHandler MOVE_ENTITY_HANDLER = new MoveEntityHandler();
     private final MoveEntityWithHeadingHandler MOVE_ENTITY_WITH_HEADING_HANDLER = new MoveEntityWithHeadingHandler();
 
@@ -43,34 +42,23 @@ public class Emulator {
         final Motion motion = this.motion.clone();
         final List<String> tags = new ArrayList<>();
 
-        float forward = input.getForward();
-        float strafing = input.getStrafing();
+        float forward;
+        float strafing;
 
-        // Are they sneaking? Slow them down some
-        if (input.isSneaking()) {
-            // these values aren't quite right,
-            // try and find out what's wrong :)
-            forward *= 0.3F;
-            strafing *= 0.3F;
-
-            tags.add("sneaking");
-        }
-
-        // Are they using an item? Slow them down a little more
-        if (input.isUsingItem()) {
-            forward *= 0.2F;
-            strafing *= 0.2F;
-
-            tags.add("using");
+        if(input.isModernMovement()) {
+            Vec2 resultingInput = getModernResultingInput(input, tags);
+            forward = resultingInput.x();
+            strafing = resultingInput.y();
+        } else {
+            Vec2 resultingInput = getResultingInput(input, tags);
+            forward = resultingInput.x();
+            strafing = resultingInput.y();
         }
 
         if(input.isSprinting()) {
             tags.add("sprinting");
         }
 
-        // Mojang multiplies by 0.98F, so do we
-        forward *= 0.9800000190734863F;
-        strafing *= 0.9800000190734863F;
 
         motion.setForward(forward);
         motion.setStrafing(strafing);
@@ -104,6 +92,73 @@ public class Emulator {
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());
     }
+
+    private Vec2 getResultingInput(IterationInput input, List<String> tags) {
+        float forward = input.getForward();
+        float strafing = input.getStrafing();
+
+        // Are they sneaking? Slow them down some
+        if (input.isSneaking()) {
+            // these values aren't quite right,
+            // try and find out what's wrong :)
+            forward *= 0.3F;
+            strafing *= 0.3F;
+            tags.add("sneaking");
+        }
+
+        // Are they using an item? Slow them down a little more
+        if (input.isUsingItem()) {
+            forward *= 0.2F;
+            strafing *= 0.2F;
+            tags.add("using");
+        }
+
+        forward*= 0.98F;
+        strafing*= 0.98F;
+
+        return new Vec2(forward, strafing);
+    }
+
+    private Vec2 getModernResultingInput(IterationInput input, List<String> tags) {
+        Vec2 moveVector = new Vec2(input.getForward(), input.getStrafing()).normalized();
+
+        if(moveVector.lengthSquared() == 0) {
+            return moveVector;
+        }
+
+        moveVector = moveVector.scale(0.98F);
+
+        if(input.isUsingItem()) {
+            tags.add("using");
+            moveVector = moveVector.scale(0.2F);
+        }
+        if(input.isSneaking()) {
+            tags.add("sneaking");
+            moveVector = moveVector.scale(0.3F);
+        }
+
+        return modifyInputSpeedForSquareMovement(moveVector);
+    }
+
+    private static Vec2 modifyInputSpeedForSquareMovement(Vec2 input) {
+        float length = input.length();
+        if (length <= 0.0F) {
+            return input;
+        } else {
+            Vec2 multiplied = input.scale(1.0F / length);
+            float distance = distanceToUnitSquare(multiplied);
+            float min = Math.min(length * distance, 1.0F);
+            return multiplied.scale(min);
+        }
+    }
+
+    private static float distanceToUnitSquare(Vec2 input) {
+        float x = Math.abs(input.x());
+        float z = Math.abs(input.y());
+        float additional = z > x ? x / z : z / x;
+        return MathHelper.sqrt_float(1.0F + (additional * additional));
+    }
+
 
     public IterationResult runTeleportIteration(final Vector vector) {
         final Motion motion = this.motion.clone();

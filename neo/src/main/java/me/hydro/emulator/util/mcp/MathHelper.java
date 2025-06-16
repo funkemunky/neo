@@ -3,6 +3,7 @@ package me.hydro.emulator.util.mcp;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class MathHelper {
     public static final float SQRT_2 = sqrt_float(2.0F);
@@ -34,6 +35,16 @@ public class MathHelper {
     private static final float[] SIN_TABLE = new float[65536];
     private static final float radToIndex = roundToFloat(651.8986469044033D);
 
+    private static final float[] SINE_TABLE_MODERN = (float[])make(new float[65536], (sineTable) -> {
+        for(int i = 0; i < sineTable.length; ++i) {
+            sineTable[i] = (float)Math.sin((double)i * Math.PI * (double)2.0F / (double)65536.0F);
+        }
+    });
+
+    private static <T> T make(T object, Consumer<? super T> initializer) {
+        initializer.accept(object);
+        return object;
+    }
     public static float sin(float value) {
         return SIN_TABLE[(int) (value * 10430.378F) & 65535];
     }
@@ -43,27 +54,21 @@ public class MathHelper {
     }
 
     public static float sin(FastMathType type, float value) {
-        switch (type) {
-            case VANILLA:
-            default:
-                return SIN_TABLE[(int) (value * 10430.378F) & 65535];
-            case FAST_LEGACY:
-                return SIN_TABLE_FAST[(int) (value * radToIndex) & 4095];
-            case FAST_NEW:
-                return SIN_TABLE_FAST_NEW[(int) (value * radToIndex) & 4095];
-        }
+        return switch (type) {
+            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)(value * 10430.378F) & '\uffff'];
+            case FAST_LEGACY -> SIN_TABLE_FAST[(int) (value * radToIndex) & 4095];
+            case FAST_NEW -> SIN_TABLE_FAST_NEW[(int) (value * radToIndex) & 4095];
+            case VANILLA -> SIN_TABLE[(int) (value * 10430.378F) & 65535];
+        };
     }
 
     public static float cos(FastMathType type, float value) {
-        switch (type) {
-            case VANILLA:
-            default:
-                return SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];
-            case FAST_LEGACY:
-                return SIN_TABLE_FAST[(int) ((value + ((float) Math.PI / 2F)) * 651.8986F) & 4095];
-            case FAST_NEW:
-                return SIN_TABLE_FAST_NEW[(int) (value * radToIndex + 1024.0F) & 4095];
-        }
+        return switch (type) {
+            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)(value * 10430.378F + 16384.0F) & '\uffff'];
+            case FAST_LEGACY -> SIN_TABLE_FAST[(int) ((value + ((float) Math.PI / 2F)) * 651.8986F) & 4095];
+            case FAST_NEW -> SIN_TABLE_FAST_NEW[(int) (value * radToIndex + 1024.0F) & 4095];
+            case VANILLA -> SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];
+        };
     }
 
     static {
@@ -522,7 +527,7 @@ public class MathHelper {
     public enum FastMathType {
         VANILLA,
         FAST_LEGACY,
-        OPTIFINE,
-        FAST_NEW
+        FAST_NEW,
+        MODERN_VANILLA
     }
 }
