@@ -53,7 +53,7 @@ public class MoveEntityHandler implements MovementHandler {
         if (edges) {
             iteration.getTags().add("edges");
 
-            double magicSteppingValue = iteration.getEmulator().getProtocolVersion() > 47 ? 0.03D : 0.05D;
+            double magicSteppingValue = iteration.getEmulator().getClientVersion() > 47 ? 0.03D : 0.05D;
 
             for (; x != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
                     .offset(x, -1.0D, 0.0D)).isEmpty(); d3 = x) {
