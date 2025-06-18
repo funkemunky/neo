@@ -1,12 +1,9 @@
 package me.hydro.emulator.handler.impl;
 
-import me.hydro.emulator.Emulator;
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionBlockState;
 import me.hydro.emulator.collision.CollisionLandable;
 import me.hydro.emulator.collision.VerticalCollisionBlock;
-import me.hydro.emulator.collision.impl.BlockSlime;
-import me.hydro.emulator.collision.impl.BlockSoulSand;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.Vector;
@@ -53,7 +50,7 @@ public class MoveEntityHandler implements MovementHandler {
         if (edges) {
             iteration.getTags().add("edges");
 
-            double magicSteppingValue = iteration.getEmulator().getClientVersion() > 47 ? 0.03D : 0.05D;
+            double magicSteppingValue = iteration.getEmulator().getPlayerVersion() > 47 ? 0.03D : 0.05D;
 
             for (; x != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
                     .offset(x, -1.0D, 0.0D)).isEmpty(); d3 = x) {

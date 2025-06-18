@@ -31,7 +31,7 @@ public class Emulator {
 
     private final DataSupplier DATA_SUPPLIER;
 
-    private final int ClientVersion;
+    private final int playerVersion;
     private final JumpHandler JUMP_HANDLER = new JumpHandler();
     private final MoveFlyingHandler MOVE_FLYING_HANDLER = new MoveFlyingHandler();
     private final ApplyMovementInputHandler APPLY_MOVEMENT_INPUT_HANDLER = new ApplyMovementInputHandler();
@@ -214,10 +214,10 @@ public class Emulator {
     }
 
     private void applyResetConstant(Motion motion) {
-        if(ClientVersion >= 767) { //Not a thing in later versions
+        if(playerVersion >= 767) { //Not a thing in later versions
             return;
         }
-        final double RESET = ClientVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
+        final double RESET = playerVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;
 
         if (Math.abs(motion.getMotionX()) < RESET) motion.setMotionX(0);
         if (Math.abs(motion.getMotionY()) < RESET) motion.setMotionY(0);
