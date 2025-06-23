@@ -12,7 +12,7 @@ public class AxisAlignedBB {
     public double maxX;
     public double maxY;
     public double maxZ;
-
+    public boolean isDebug;
     public AxisAlignedBB(Vector vec, double width, double height) {
         this(vec.getX(), vec.getY(), vec.getZ(), vec.getX(), vec.getY(), vec.getZ());
 
@@ -156,25 +156,26 @@ public class AxisAlignedBB {
      * calculated offset.  Otherwise return the calculated offset.
      */
     public double calculateYOffset(AxisAlignedBB other, double p_72323_2_) {
-        if (other.maxX > this.minX && other.minX < this.maxX && other.maxZ > this.minZ && other.minZ < this.maxZ) {
-            double var4;
+        if (other.maxX > this.minX && other.minX < this.maxX
+                && other.maxZ > this.minZ && other.minZ < this.maxZ) {
+            double d1;
 
             if (p_72323_2_ > 0.0D && other.maxY <= this.minY) {
-                var4 = this.minY - other.maxY;
-
-                if (var4 < p_72323_2_) {
-                    p_72323_2_ = var4;
+                d1 = this.minY - other.maxY;
+                if (d1 < p_72323_2_) {
+                    p_72323_2_ = d1;
                 }
             } else if (p_72323_2_ < 0.0D && other.minY >= this.maxY) {
-                var4 = this.maxY - other.minY;
-
-                if (var4 > p_72323_2_) {
-                    p_72323_2_ = var4;
+                d1 = this.maxY - other.minY;
+                if (d1 > p_72323_2_) {
+                    p_72323_2_ = d1;
                 }
             }
 
+            return p_72323_2_;
+        } else {
+            return p_72323_2_;
         }
-        return p_72323_2_;
     }
 
     /**
