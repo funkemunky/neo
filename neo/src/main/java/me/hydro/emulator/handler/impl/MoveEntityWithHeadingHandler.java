@@ -2,6 +2,7 @@ package me.hydro.emulator.handler.impl;
 
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.FrictionModifier;
+import me.hydro.emulator.collision.impl.BlockSlime;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
@@ -92,6 +93,9 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         Block block = iteration.getDataSupplier().getBlockAt(position.toBlockPos());
 
         if(block instanceof FrictionModifier) {
+            if(block instanceof BlockSlime) {
+                iteration.getTags().add("slime-block");
+            }
             return ((FrictionModifier)block).getFriction();
         }
 
