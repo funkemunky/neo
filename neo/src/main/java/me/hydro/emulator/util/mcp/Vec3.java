@@ -2,6 +2,10 @@ package me.hydro.emulator.util.mcp;
 
 public class Vec3
 {
+
+    /** Statics */
+    public static final Vec3 ZERO = new Vec3(0.0, 0.0, 0.0);
+
     /** X coordinate of Vec3D */
     public final double xCoord;
 
