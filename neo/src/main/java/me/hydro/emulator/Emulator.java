@@ -83,11 +83,20 @@ public class Emulator {
         applyResetConstant(motion);
 
         if (input.isJumping()) {
-            iteration = JUMP_HANDLER.handle(iteration);
+            var result = JUMP_HANDLER.handle(iteration);
+
+            if(result == null) {
+                System.out.println("There was a null point that was about to occur with JUMP");
+            } else iteration = result;
+
             tags.add("jump");
         }
 
-        iteration = MOVE_ENTITY_WITH_HEADING_HANDLER.handle(iteration);
+        var result = MOVE_ENTITY_WITH_HEADING_HANDLER.handle(iteration);
+
+        if(result == null) {
+            System.out.println("There was a null point that was about to occur with MOVE ENTITY");
+        } else iteration = result;
 
         return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());

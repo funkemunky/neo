@@ -9,7 +9,7 @@ public class ApplyMovementInputHandler implements MovementHandler {
     @Override
     public IterationHolder handle(IterationHolder iteration) {
         updateVelocity(getMovementSpeed(iteration, iteration.getFriction()), iteration);
-        return null;
+        return iteration;
     }
 
     private void updateVelocity(float moveSpeed, IterationHolder iter) {
