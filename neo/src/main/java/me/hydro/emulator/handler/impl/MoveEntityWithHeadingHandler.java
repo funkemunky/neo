@@ -55,13 +55,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         // This is how our move flying handler will access moveSpeed
         iteration.setFriction(moveSpeed);
 
-        if(!input.isModernMovement()) {
-            // Run Entity#moveFlying
-            iteration = iteration.getEmulator().getMOVE_FLYING_HANDLER().handle(iteration);
-        } else {
-            // Run Entity#applyMovementInput
-            iteration = iteration.getEmulator().getAPPLY_MOVEMENT_INPUT_HANDLER().handle(iteration);
-        }
+        iteration = iteration.getEmulator().getMOVE_FLYING_HANDLER().handle(iteration);
 
         // Set friction back to the actual friction
         iteration.setFriction(friction);

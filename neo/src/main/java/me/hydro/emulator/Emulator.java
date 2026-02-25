@@ -34,7 +34,6 @@ public class Emulator {
     private final int playerVersion;
     private final JumpHandler JUMP_HANDLER = new JumpHandler();
     private final MoveFlyingHandler MOVE_FLYING_HANDLER = new MoveFlyingHandler();
-    private final ApplyMovementInputHandler APPLY_MOVEMENT_INPUT_HANDLER = new ApplyMovementInputHandler();
     private final MoveEntityHandler MOVE_ENTITY_HANDLER = new MoveEntityHandler();
     private final MoveEntityWithHeadingHandler MOVE_ENTITY_WITH_HEADING_HANDLER = new MoveEntityWithHeadingHandler();
 
@@ -49,6 +48,7 @@ public class Emulator {
             Vec2 resultingInput = getModernResultingInput(input, tags);
             forward = resultingInput.x();
             strafing = resultingInput.y();
+            tags.add("modern");
         } else {
             Vec2 resultingInput = getResultingInput(input, tags);
             forward = resultingInput.x();
