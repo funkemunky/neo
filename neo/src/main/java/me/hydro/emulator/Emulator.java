@@ -223,7 +223,11 @@ public class Emulator {
     }
 
     private void applyResetConstant(Motion motion) {
-        if(playerVersion >= 767) { //Not a thing in later versions
+        if(playerVersion >= 767) {
+            if ((motion.getMotionX() * motion.getMotionX() + motion.getMotionZ() * motion.getMotionZ()) < 9.0E-6) {
+                motion.setMotionX(0);
+                motion.setMotionZ(0);
+            }
             return;
         }
         final double RESET = playerVersion > 47 ? MojangConstants.RESET : MojangConstants.RESET_LEGACY;

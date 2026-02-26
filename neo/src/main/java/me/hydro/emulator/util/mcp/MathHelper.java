@@ -6,18 +6,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MathHelper {
-    public static final float SQRT_2 = sqrt_float(2.0F);
-    public static final float PI = (float) Math.PI;
-    public static final float PI2 = ((float) Math.PI * 2F);
-    public static final float PId2 = ((float) Math.PI / 2F);
-    public static final float deg2Rad = 0.017453292F;
-    private static final int SIN_BITS = 12;
-    private static final int SIN_MASK = 4095;
-    private static final int SIN_COUNT = 4096;
-    private static final float radFull = ((float) Math.PI * 2F);
-    private static final float degFull = 360.0F;
-    private static final float degToIndex = 11.377778F;
-
     /**
      * Though it looks like an array, this is really more like a mapping.  Key (index of this array) is the upper 5 bits
      * of the result of multiplying a 32-bit unsigned integer by the B(2, 5) De Bruijn sequence 0x077CB531.  Value
@@ -29,15 +17,14 @@ public class MathHelper {
     private static final double field_181163_d;
     private static final double[] field_181164_e;
     private static final double[] field_181165_f;
-    private static final String __OBFID = "CL_00001496";
 
     private static final float[] SIN_TABLE_FAST = new float[4096], SIN_TABLE_FAST_NEW = new float[4096];
     private static final float[] SIN_TABLE = new float[65536];
     private static final float radToIndex = roundToFloat(651.8986469044033D);
 
     private static final float[] SINE_TABLE_MODERN = (float[])make(new float[65536], (sineTable) -> {
-        for(int i = 0; i < sineTable.length; ++i) {
-            sineTable[i] = (float)Math.sin((double)i * Math.PI * (double)2.0F / (double)65536.0F);
+        for (int ix = 0; ix < sineTable.length; ix++) {
+            sineTable[ix] = (float)Math.sin(ix / 10430.378350470453);
         }
     });
 
@@ -55,7 +42,7 @@ public class MathHelper {
 
     public static float sin(FastMathType type, float value) {
         return switch (type) {
-            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)(value * 10430.378F) & '\uffff'];
+            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)((long)(value * 10430.378350470453) & 65535L)];
             case FAST_LEGACY -> SIN_TABLE_FAST[(int) (value * radToIndex) & 4095];
             case FAST_NEW -> SIN_TABLE_FAST_NEW[(int) (value * radToIndex) & 4095];
             case VANILLA -> SIN_TABLE[(int) (value * 10430.378F) & 65535];
@@ -64,7 +51,7 @@ public class MathHelper {
 
     public static float cos(FastMathType type, float value) {
         return switch (type) {
-            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)(value * 10430.378F + 16384.0F) & '\uffff'];
+            case MODERN_VANILLA -> SINE_TABLE_MODERN[(int)((long)(value * 10430.378350470453 + 16384.0) & 65535L)];
             case FAST_LEGACY -> SIN_TABLE_FAST[(int) ((value + ((float) Math.PI / 2F)) * 651.8986F) & 4095];
             case FAST_NEW -> SIN_TABLE_FAST_NEW[(int) (value * radToIndex + 1024.0F) & 4095];
             case VANILLA -> SIN_TABLE[(int) (value * 10430.378F + 16384.0F) & 65535];

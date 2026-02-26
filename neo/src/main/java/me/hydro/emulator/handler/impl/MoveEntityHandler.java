@@ -2,7 +2,6 @@ package me.hydro.emulator.handler.impl;
 
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionBlockState;
-import me.hydro.emulator.collision.CollisionLandable;
 import me.hydro.emulator.collision.VerticalCollisionBlock;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.iteration.IterationHolder;
@@ -48,49 +47,82 @@ public class MoveEntityHandler implements MovementHandler {
         final boolean edges = iteration.getInput().isSneaking() && iteration.getInput().isGround();
 
         if (edges) {
-            iteration.getTags().add("edges");
+            if(iteration.getEmulator().getPlayerVersion() < 767) {
+                double magicSteppingValue = iteration.getEmulator().getPlayerVersion() > 47 ? 0.03D : 0.05D;
 
-            double magicSteppingValue = iteration.getEmulator().getPlayerVersion() > 47 ? 0.03D : 0.05D;
+                for (; x != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
+                        .offset(x, -1.0D, 0.0D)).isEmpty(); d3 = x) {
+                    if (x < magicSteppingValue && x >= -magicSteppingValue) {
+                        x = 0.0D;
+                    } else if (x > 0.0D) {
+                        x -= magicSteppingValue;
+                    } else x += magicSteppingValue;
+                }
 
-            for (; x != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
-                    .offset(x, -1.0D, 0.0D)).isEmpty(); d3 = x) {
-                if (x < magicSteppingValue && x >= -magicSteppingValue) {
-                    x = 0.0D;
-                } else if (x > 0.0D) {
-                    x -= magicSteppingValue;
-                } else x += magicSteppingValue;
+                for (; z != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
+                        .offset(0.0D, -1.0D, z)).isEmpty(); d5 = z) {
+                    if (z < magicSteppingValue && z >= -magicSteppingValue) {
+                        z = 0.0D;
+                    } else if (z > 0.0D) {
+                        z -= magicSteppingValue;
+                    } else z += magicSteppingValue;
+                }
 
-                d3 = x;
-            }
+                for (; x != 0.0D && z != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
+                        .offset(x, -1.0D, z)).isEmpty(); d5 = z) {
+                    if (x < magicSteppingValue && x >= -magicSteppingValue) {
+                        x = 0.0D;
+                    } else if (x > 0.0D) {
+                        x -= magicSteppingValue;
+                    } else x += magicSteppingValue;
 
-            for (; z != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
-                    .offset(0.0D, -1.0D, z)).isEmpty(); d5 = z) {
-                if (z < magicSteppingValue && z >= -magicSteppingValue) {
-                    z = 0.0D;
-                } else if (z > 0.0D) {
-                    z -= magicSteppingValue;
-                } else z += magicSteppingValue;
+                    d3 = x;
 
-                d5 = z;
-            }
+                    if (z < magicSteppingValue && z >= -magicSteppingValue) {
+                        z = 0.0D;
+                    } else if (z > 0.0D) {
+                        z -= magicSteppingValue;
+                    } else z += magicSteppingValue;
+                }
+                iteration.getTags().add("edges");
+            } else {
+                double f = 0.6d;
+                double h = Math.signum(d3) * 0.05;
 
-            for (; x != 0.0D && z != 0.0D && iteration.getDataSupplier().getCollidingBoxes(lastReportedBoundingBox
-                    .offset(x, -1.0D, z)).isEmpty(); d5 = z) {
-                if (x < magicSteppingValue && x >= -magicSteppingValue) {
-                    x = 0.0D;
-                } else if (x > 0.0D) {
-                    x -= magicSteppingValue;
-                } else x += magicSteppingValue;
+                double i;
+                for (i = Math.signum(d5) * 0.05; d3 != 0.0 && this.canFallAtLeast(iteration, d3, 0.0, f); d3 -= h) {
+                    if (Math.abs(d3) <= 0.05) {
+                        d3 = 0.0;
+                        break;
+                    }
+                }
 
-                d3 = x;
+                while (d5 != 0.0 && this.canFallAtLeast(iteration, 0.0, d5, f)) {
+                    if (Math.abs(d5) <= 0.05) {
+                        d5 = 0.0;
+                        break;
+                    }
 
-                if (z < magicSteppingValue && z >= -magicSteppingValue) {
-                    z = 0.0D;
-                } else if (z > 0.0D) {
-                    z -= magicSteppingValue;
-                } else z += magicSteppingValue;
+                    d5 -= i;
+                }
 
-                d5 = z;
+                while (d3 != 0.0 && d5 != 0.0 && this.canFallAtLeast(iteration, d3, d5, f)) {
+                    if (Math.abs(d3) <= 0.05) {
+                        d3 = 0.0;
+                    } else {
+                        d3 -= h;
+                    }
+
+                    if (Math.abs(d5) <= 0.05) {
+                        d5 = 0.0;
+                    } else {
+                        d5 -= i;
+                    }
+                }
+
+                x = d3;
+                z = d5;
+                iteration.getTags().add("edges-modern");
             }
         }
 
@@ -266,13 +298,11 @@ public class MoveEntityHandler implements MovementHandler {
                 /* fences need to be implemented here. good luck have fun :) */
 
                 if (y1 != y2) {
-                    ((CollisionLandable) block).onLand(emulator);
+                    block.onLand(emulator);
                     emulator.getTags().add("landed");
                 }
 
-                if (collidedGround && block instanceof VerticalCollisionBlock) {
-                    final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) block;
-
+                if (collidedGround && block instanceof VerticalCollisionBlock leFunnyBlock) {
                     leFunnyBlock.transform(emulator);
                 }
             }
@@ -309,6 +339,15 @@ public class MoveEntityHandler implements MovementHandler {
         });
 
         return iteration;
+    }
+
+    public final boolean canFallAtLeast(IterationHolder iteration, double d, double e, double f) {
+        AxisAlignedBB aABB = iteration.getEmulator().getLastReportedBoundingBox();
+
+        var boxes = iteration.getDataSupplier()
+                .getCollidingBoxes(new AxisAlignedBB(aABB.minX + 1.0E-7 + d, aABB.minY - f - 1.0E-7, aABB.minZ + 1.0E-7 + e,
+                        aABB.maxX - 1.0E-7 + d, aABB.minY, aABB.maxZ - 1.0E-7 + e));
+        return boxes.isEmpty();
     }
 
     /*
