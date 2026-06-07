@@ -1,0 +1,9 @@
+dependencies {
+    implementation "com.google.guava:guava:${rootProject.ext.guavaVersion}"
+    compileOnly "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}

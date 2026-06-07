@@ -1,0 +1,6 @@
+rootProject.name = 'neo'
+
+include 'neo', 'example'
+
+project(':neo').projectDir = file('neo')
+project(':example').projectDir = file('example')

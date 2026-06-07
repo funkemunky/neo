@@ -26,7 +26,7 @@ public class ExamplePredictions {
         public Block getBlockAt(BlockPos blockPos) {
             return null;
         }
-    });
+    }, 47);
 
     public void runEmulation() {
         // Here we'll build the iteration input object we'll feed into the emulator

@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':neo')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}

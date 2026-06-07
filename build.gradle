@@ -1,0 +1,30 @@
+plugins {
+    id 'base'
+}
+
+ext {
+    guavaVersion = '33.4.0-jre'
+    lombokVersion = '1.18.46'
+}
+
+allprojects {
+    group = 'me.hydro'
+    version = '1.2.1-neo'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    java {
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ['-XDignore.symbol.file']
+    }
+}

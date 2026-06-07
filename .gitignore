@@ -96,6 +96,9 @@ $RECYCLE.BIN/
 *.lnk
 
 target/
+build/
+**/build/
+.gradle/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -108,6 +111,8 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 .flattened-pom.xml
+
+!gradle/wrapper/gradle-wrapper.jar
 
 # Common working directory
 run/
